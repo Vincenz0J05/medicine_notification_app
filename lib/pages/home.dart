@@ -83,13 +83,52 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: 
-      ExpansionTile(
-      title: Text(
-        'Today, $formattedDate',
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-        ),
+      body:
+      Theme(
+  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+  child: ExpansionTile(
+    title: Text(
+      'Today, $formattedDate',
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+    ),
+        children: [
+          Container(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int index) {
+                DateTime nextDate = DateTime.now().add(Duration(days: index));
+                String dateNumber = DateFormat('d').format(nextDate);
+                String day = DateFormat('EEE').format(nextDate).substring(0, 3);
+
+                return Container(
+                  margin: EdgeInsets.only(
+                      left: index == 0 ? 10 : 5,
+                      right:
+                          5), // Add space on the left only for the first item
+                  width: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: const Color(0xFFeff0f4),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(dateNumber,
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text(day)
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          )
+        ],
       ),
+    ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
