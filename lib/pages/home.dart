@@ -40,13 +40,12 @@ class _HomePageState extends State<HomePage> {
       ),
       builder: (BuildContext context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.95,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
+            height: MediaQuery.of(context).size.height * 0.95,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Form(
+                key: _formKey,
+                child: Column(children: [
                   Container(
                     width: 40,
                     height: 5,
@@ -56,39 +55,147 @@ class _HomePageState extends State<HomePage> {
                           const BorderRadius.all(Radius.circular(12.0)),
                     ),
                   ),
-                  const Text('text'),
-                  TextFormField(
-                    decoration:
-                        const InputDecoration(labelText: 'Medicijn Naam'),
+                  Container(
+                      margin: const EdgeInsets.only(top: 20, bottom: 10),
+                      alignment: Alignment.center,
+                      child: const Text('Plan je medicijn inname in',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20))),
+                  const SizedBox(height: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Medicijn Naam'),
+                      const HeightEight(),
+                      inputStyle(
+                          prefixIcon: Icons.medication_rounded,
+                          hintText: 'Antibiotica')
+                    ],
                   ),
-                  TextFormField(
-                    decoration: const InputDecoration(labelText: 'Dosering'),
+                  const HeightTwelve(),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Hoeveelheid'),
+                            const HeightEight(),
+                            inputStyle(
+                                prefixIcon: Icons.medical_information,
+                                hintText: '2 pills'),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Hoevaak Innemen'),
+                          const HeightEight(),
+                          inputStyle(
+                              prefixIcon: Icons.calendar_today_outlined,
+                              hintText: 'Elke dag')
+                        ],
+                      ))
+                      // ElevatedButton(
+                      //     onPressed: () {}, child: const Text('Confirm'))
+                    ],
                   ),
-                  TextFormField(
-                    decoration:
-                        const InputDecoration(labelText: 'Hoevaak per dag'),
+                  const HeightTwelve(),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Dosis'),
+                      const HeightEight(),
+                      inputStyle(
+                          prefixIcon: Icons.add_moderator_outlined,
+                          hintText: '250MG')
+                    ],
                   ),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                        labelText: 'Hoevaal dagen in de week innemen'),
-                  ),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                        labelText: 'Welke dagen in de week'),
-                  ),
-                  TextFormField(
-                    decoration:
-                        const InputDecoration(labelText: 'Tijdstip van inname'),
-                  ),
-                  ElevatedButton(onPressed: () {}, child: const Text('Confirm'))
-                ],
+                  const HeightTwelve(),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Herinnering'),
+                            const HeightEight(),
+                            inputStyle(
+                                prefixIcon: Icons.alarm_sharp,
+                                hintText: '09:00')
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xffeb6081), Color(0xffeb6081)],
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                // Handle button press
+                              },
+                              icon: const Icon(Icons.add, color: Colors.white),
+                              iconSize: 40,
+                              color: const Color(0xffeb6081),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
+                ]),
               ),
-            ),
-          ),
-        );
+            ));
       },
     );
   }
+}
+
+class HeightTwelve extends StatelessWidget {
+  const HeightTwelve({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 12);
+  }
+}
+
+class HeightEight extends StatelessWidget {
+  const HeightEight({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 8);
+  }
+}
+
+Widget inputStyle({IconData? prefixIcon, String? hintText}) {
+  return TextField(
+    decoration: InputDecoration(
+      filled: true,
+      fillColor: Colors.grey[200],
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide.none,
+      ),
+      prefixIcon: Icon(prefixIcon),
+      hintText: hintText,
+    ),
+  );
 }
 
 class DateSelector extends StatelessWidget {
@@ -265,7 +372,8 @@ class Footer extends StatelessWidget {
           Expanded(
             child: FloatingActionButton(
                 backgroundColor: const Color(0xffeb6081),
-                onPressed: onButtonPressed, child: const Icon(Icons.add)),
+                onPressed: onButtonPressed,
+                child: const Icon(Icons.add)),
           ),
           const Expanded(child: Icon(Icons.history, size: 30))
         ],
