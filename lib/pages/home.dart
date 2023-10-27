@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,127 +36,189 @@ class _HomePageState extends State<HomePage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-      ),
       builder: (BuildContext context) {
         return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.95,
             child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(children: [
-                  Container(
-                    width: 40,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(12.0)),
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 40),
+                child: Form(
+                  key: _formKey,
+                  child: Column(children: [
+                    Row(
+                      children: [
+                        // Use the Padding widget to remove inherent padding around the IconButton
+                        Padding(
+                          padding: EdgeInsets.zero,
+                          child: IconButton(
+                            icon:
+                                Icon(Icons.arrow_back, color: Colors.grey[700]),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            padding: const EdgeInsets.only(
+                                right:
+                                    10), // Here, we remove the inherent padding
+                            constraints:
+                                const BoxConstraints(), // This removes minimum size constraints
+                          ),
+                        ),
+                        // This is the text
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.centerLeft,
+                            child: const Text('Plan je medicijn inname in',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15)),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Container(
-                      margin: const EdgeInsets.only(top: 20, bottom: 10),
-                      alignment: Alignment.center,
-                      child: const Text('Plan je medicijn inname in',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20))),
-                  const SizedBox(height: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Medicijn Naam'),
-                      const HeightEight(),
-                      inputStyle(
-                          prefixIcon: Icons.medication_rounded,
-                          hintText: 'Antibiotica')
-                    ],
-                  ),
-                  const HeightTwelve(),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
+                    const HeightTwelve(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Medicijn Naam'),
+                        const HeightEight(),
+                        inputStyle(
+                            prefixIcon: Icons.medication_rounded,
+                            hintText: 'Antibiotica')
+                      ],
+                    ),
+                    const HeightTwelve(),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Hoeveelheid'),
+                              const HeightEight(),
+                              inputStyle(
+                                  prefixIcon: Icons.medical_information,
+                                  hintText: '2 pills'),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                            child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Hoeveelheid'),
+                            const Text('Hoevaak Innemen'),
                             const HeightEight(),
                             inputStyle(
-                                prefixIcon: Icons.medical_information,
-                                hintText: '2 pills'),
+                                prefixIcon: Icons.calendar_today_outlined,
+                                hintText: 'Elke dag')
                           ],
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                          child: Column(
+                        ))
+                      ],
+                    ),
+                    const HeightTwelve(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Dosis'),
+                        const HeightEight(),
+                        inputStyle(
+                            prefixIcon: Icons.add_moderator_outlined,
+                            hintText: '250MG')
+                      ],
+                    ),
+                    const HeightTwelve(),
+                    Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Hoevaak Innemen'),
+                          const Text('Hoevaak Herhalen'),
                           const HeightEight(),
                           inputStyle(
-                              prefixIcon: Icons.calendar_today_outlined,
-                              hintText: 'Elke dag')
-                        ],
-                      ))
-                      // ElevatedButton(
-                      //     onPressed: () {}, child: const Text('Confirm'))
-                    ],
-                  ),
-                  const HeightTwelve(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Dosis'),
-                      const HeightEight(),
-                      inputStyle(
-                          prefixIcon: Icons.add_moderator_outlined,
-                          hintText: '250MG')
-                    ],
-                  ),
-                  const HeightTwelve(),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                              prefixIcon: Icons.calendar_today,
+                              hintText: 'Elke Dag')
+                        ]),
+                    const HeightTwelve(),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Herinnering'),
+                              const HeightEight(),
+                              inputStyle(
+                                  prefixIcon: Icons.alarm_sharp,
+                                  hintText: '09:00')
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Column(
                           children: [
-                            const Text('Herinnering'),
-                            const HeightEight(),
-                            inputStyle(
-                                prefixIcon: Icons.alarm_sharp,
-                                hintText: '09:00')
+                            const SizedBox(height: 20),
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xffeb6081),
+                                    Color(0xffeb6081)
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  // Handle button press
+                                },
+                                icon:
+                                    const Icon(Icons.add, color: Colors.white),
+                                iconSize: 40,
+                                color: const Color(0xffeb6081),
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      const SizedBox(width: 15),
-                      Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xffeb6081), Color(0xffeb6081)],
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: IconButton(
-                              onPressed: () {
-                                // Handle button press
-                              },
-                              icon: const Icon(Icons.add, color: Colors.white),
-                              iconSize: 40,
-                              color: const Color(0xffeb6081),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                ]),
-              ),
-            ));
+                      ],
+                    ),
+                    const HeightTwelve(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Uiterlijk'),
+                        const HeightEight(),
+                        SizedBox(
+                          height:
+                              20, // You may want to increase this if the icons are clipped
+                          child: ListView.builder(
+                              itemCount: 5,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                    padding: const EdgeInsets.only(right: 20),
+                                    child: SvgPicture.asset(
+                                        'lib/assets/images/svg/blue-pill.svg',
+                                        width: 50,
+                                        height: 50));
+                              }),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                    ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.resolveWith<Color>(
+                                    (states) => const Color(0xffeb6081)),
+                            minimumSize:
+                                MaterialStateProperty.resolveWith<Size>(
+                              (states) => Size(
+                                  MediaQuery.of(context).size.width * 0.95,
+                                  50.0),
+                            )),
+                        onPressed: () {},
+                        child: const Text(
+                          'Done',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.normal),
+                        ))
+                  ]),
+                )));
       },
     );
   }
@@ -221,7 +284,7 @@ class DateSelector extends StatelessWidget {
             ),
             children: [
               SizedBox(
-                height: 100,
+                height: 90,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (BuildContext context, int index) {
@@ -248,6 +311,7 @@ class DateSelector extends StatelessWidget {
                             Text(dateNumber,
                                 style: const TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 10),
                             Text(day)
                           ],
                         ),
@@ -270,6 +334,29 @@ class MedicationCard extends StatelessWidget {
     super.key,
   });
 
+  void _showDetails(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return const Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // To make the modal compact
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('Detoxil, 20MG',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
+              Text(
+                  'Detailed information about the medication, its prescriptions, warnings, etc.'),
+              // ... you can add more Text Widgets here with more information or buttons for actions
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -282,12 +369,12 @@ class MedicationCard extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
         Container(
-          margin: const EdgeInsets.only(top: 5, bottom: 5),
+          margin: const EdgeInsets.only(top: 18, bottom: 5),
           height: 100,
           width: MediaQuery.of(context).size.width * 0.95,
           decoration: BoxDecoration(
             color: const Color(0xFFeff0f4),
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(25),
           ),
           child: Row(
             crossAxisAlignment:
@@ -333,13 +420,11 @@ class MedicationCard extends StatelessWidget {
                           child: Center(
                             child: InkWell(
                               onTap: () {
-                                // Handle the action here
+                                _showDetails(context);
                               },
-                              child: const Text(
-                                'Show more',
-                                style: TextStyle(
-                                  color: Color(0xffeb6081),
-                                ),
+                              child: const Icon(
+                                Icons.info,
+                                color: Color(0xffeb6081),
                               ),
                             ),
                           ),
