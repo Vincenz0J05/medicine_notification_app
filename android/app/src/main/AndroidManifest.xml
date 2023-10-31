@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permissions android:name="android.permissions.CAMERA"/>
     <application
         android:label="medicine_notification_app"
         android:name="${applicationName}"

@@ -46,22 +46,14 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       children: [
                         // Use the Padding widget to remove inherent padding around the IconButton
-                        Padding(
-                          padding: EdgeInsets.zero,
-                          child: IconButton(
-                            icon:
-                                Icon(Icons.arrow_back, color: Colors.grey[700]),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            padding: const EdgeInsets.only(
-                                right:
-                                    10), // Here, we remove the inherent padding
-                            constraints:
-                                const BoxConstraints(), // This removes minimum size constraints
-                          ),
+                        IconButton(
+                          icon: Icon(Icons.arrow_back, color: Colors.grey[700]),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          constraints:
+                              const BoxConstraints(), // This removes minimum size constraints
                         ),
-                        // This is the text
                         Expanded(
                           child: Container(
                             alignment: Alignment.centerLeft,
@@ -192,9 +184,8 @@ class _HomePageState extends State<HomePage> {
                                 return Padding(
                                     padding: const EdgeInsets.only(right: 20),
                                     child: SvgPicture.asset(
-                                        'lib/assets/images/svg/blue-pill.svg',
-                                        width: 50,
-                                        height: 50));
+                                      'assets/images/svg/blue-pill.svg',
+                                    ));
                               }),
                         )
                       ],
@@ -337,20 +328,255 @@ class MedicationCard extends StatelessWidget {
   void _showDetails(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
-        return const Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min, // To make the modal compact
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('Detoxil, 20MG',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              Text(
-                  'Detailed information about the medication, its prescriptions, warnings, etc.'),
-              // ... you can add more Text Widgets here with more information or buttons for actions
-            ],
+        return FractionallySizedBox(
+          heightFactor: 0.95,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const HeightTwelve(),
+                Row(
+                  children: [
+                    IconButton(
+                      padding: const EdgeInsets.all(0),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_rounded,
+                        color: Color(0xffeb6081),
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      constraints:
+                          const BoxConstraints(), // This removes minimum size constraints
+                    ),
+                    const SizedBox(width: 3),
+                    Expanded(
+                        child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: const Text(
+                        'Terug',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Color(0xffeb6081),
+                        ),
+                      ),
+                    ))
+                  ],
+                ),
+                const HeightTwelve(),
+                const Placeholder(
+                  color: Colors.red,
+                  fallbackHeight: 200,
+                  fallbackWidth: 0.90,
+                ),
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Detoxil',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 30)),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Text('20mg pills')
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 70,
+                        decoration: BoxDecoration(
+                            color: const Color(0xFFeff0f4),
+                            borderRadius: BorderRadius.circular(25)),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10), // adjusted padding
+                          child: Row(children: [
+                            Image.asset(
+                              'assets/images/—Pngtree—pharmacy drug health tablet pharmaceutical_6861618.png',
+                              width: 40, // reduced image width
+                            ),
+                            const SizedBox(width: 5), // reduced spacing
+                            const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('60 mg',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20)),
+                                SizedBox(height: 5),
+                                Text('Daily Dosage')
+                              ],
+                            )
+                          ]),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10), // reduced spacing
+                    Expanded(
+                      child: Container(
+                        height: 70,
+                        decoration: BoxDecoration(
+                            color: const Color(0xFFeff0f4),
+                            borderRadius: BorderRadius.circular(25)),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10), // adjusted padding
+                          child: Row(children: [
+                            Image.asset(
+                              'assets/images/—Pngtree—pharmacy drug health tablet pharmaceutical_6861618.png',
+                              width: 40, // reduced image width
+                            ),
+                            const SizedBox(width: 5), // reduced spacing
+                            const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('3x Pills',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20)),
+                                SizedBox(height: 5),
+                                Text('Each Day')
+                              ],
+                            )
+                          ]),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Gepland',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    const SizedBox(height: 15),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFeff0f4),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                '10:00',
+                                style: TextStyle(color: Color(0xffeb6081), fontWeight: FontWeight.bold, fontSize: 18),
+                              ),
+                              Transform.scale(
+                                scale: 1,
+                                child: const  Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Checkbox(
+                                      shape: CircleBorder(),
+                                      value: true,
+                                      onChanged: null,
+                                      activeColor: Colors.green,
+                                      checkColor:
+                                          Colors.green, // same as activeColor
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    Icon(Icons.check,
+                                        size: 12,
+                                        color: Colors.white), // Adjust the size as needed
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                '15:00',
+                                style: TextStyle(color: Color(0xffeb6081), fontWeight: FontWeight.bold, fontSize: 18),
+                              ),
+                              Transform.scale(
+                                scale: 1,
+                                child: const  Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Checkbox(
+                                      shape: CircleBorder(),
+                                      value: false,
+                                      onChanged: null,
+                                      activeColor: Colors.green,
+                                      checkColor:
+                                          Colors.green, // same as activeColor
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    Icon(Icons.check,
+                                        size: 12,
+                                        color: Colors.white), // Adjust the size as needed
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                '18:00',
+                                style: TextStyle(color: Color(0xffeb6081), fontWeight: FontWeight.bold, fontSize: 18),
+                              ),
+                              Transform.scale(
+                                scale: 1,
+                                child: const  Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Checkbox(
+                                      shape: CircleBorder(),
+                                      value: false,
+                                      onChanged: null,
+                                      activeColor: Colors.green,
+                                      checkColor:
+                                          Colors.green, // same as activeColor
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    Icon(Icons.check,
+                                        size: 12,
+                                        color: Colors.white), // Adjust the size as needed
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              ],
+              
+            ),
           ),
         );
       },
@@ -389,7 +615,7 @@ class MedicationCard extends StatelessWidget {
                   color: Colors.white,
                 ),
                 child: Image.asset(
-                    'lib/assets/images/—Pngtree—pharmacy drug health tablet pharmaceutical_6861618.png'),
+                    'assets/images/—Pngtree—pharmacy drug health tablet pharmaceutical_6861618.png'),
               ),
               const SizedBox(width: 15),
               Expanded(
