@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,6 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormState>();
+  List<String> reminders = []; // A list to store reminder times
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text(
+          title: const Text(  
             'Overview',
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
@@ -47,7 +49,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         // Use the Padding widget to remove inherent padding around the IconButton
                         IconButton(
-                          icon: Icon(Icons.arrow_back, color: Colors.grey[700]),
+                          icon: const Icon(Icons.arrow_back_ios, color: Color(0xffeb6081), size: 20),
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -59,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                             alignment: Alignment.centerLeft,
                             child: const Text('Plan je medicijn inname in',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15)),
+                                    fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xffeb6081))),
                           ),
                         ),
                       ],
@@ -252,26 +254,54 @@ Widget inputStyle({IconData? prefixIcon, String? hintText}) {
   );
 }
 
-class DateSelector extends StatelessWidget {
-  const DateSelector({
-    super.key,
-    required this.formattedDate,
-  });
-
+class DateSelector extends StatefulWidget {
   final String formattedDate;
+
+  const DateSelector({
+    Key? key,
+    required this.formattedDate,
+  }) : super(key: key);
+
+  @override
+  DateSelectorState createState() => DateSelectorState();
+}
+
+class DateSelectorState extends State<DateSelector> {
+  final ValueNotifier<bool> _isExpanded = ValueNotifier<bool>(true);
+  DateTime _selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Theme(
-          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          data: ThemeData(
+            dividerColor: Colors.transparent,
+          ),
           child: ExpansionTile(
+            onExpansionChanged: (bool expanded) {
+              _isExpanded.value = expanded;
+            },
             initiallyExpanded: true,
+            trailing: ValueListenableBuilder<bool>(
+              valueListenable: _isExpanded,
+              builder: (context, isExpanded, child) {
+                return RotatedBox(
+                  quarterTurns: isExpanded ? 0 : 2,
+                  child: const Icon(
+                    Icons.expand_more,
+                    color: Color(0xffeb6081),
+                  ),
+                );
+              },
+            ),
             title: Text(
-              'Today, $formattedDate',
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+              'Today, ${widget.formattedDate}',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+                color: Colors.black,
+              ),
             ),
             children: [
               SizedBox(
@@ -285,36 +315,59 @@ class DateSelector extends StatelessWidget {
                     String day =
                         DateFormat('EEE').format(nextDate).substring(0, 3);
 
-                    return Container(
-                      margin: EdgeInsets.only(
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedDate = nextDate;
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
                           left: index == 0 ? 10 : 5,
-                          right:
-                              5), // Add space on the left only for the first item
-                      width: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: const Color(0xFFeff0f4),
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(dateNumber,
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 10),
-                            Text(day)
-                          ],
+                          right: 5,
+                        ),
+                        width: 60,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: nextDate.day == _selectedDate.day
+                              ? const Color(0xffeb6081)
+                              : const Color(0xFFeff0f4),
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                dateNumber,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: nextDate.day == _selectedDate.day
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                day,
+                                style: TextStyle(
+                                  color: nextDate.day == _selectedDate.day
+                                      ? Colors.white
+                                      : Colors.black, // Change here for the day
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     );
                   },
                 ),
-              )
+              ),
             ],
           ),
         ),
-        const MedicationCard()
+        MedicationCard(date: _selectedDate),
       ],
     );
   }
@@ -323,6 +376,7 @@ class DateSelector extends StatelessWidget {
 class MedicationCard extends StatelessWidget {
   const MedicationCard({
     super.key,
+    required DateTime date,
   });
 
   void _showDetails(BuildContext context) {
@@ -484,11 +538,14 @@ class MedicationCard extends StatelessWidget {
                             children: [
                               const Text(
                                 '10:00',
-                                style: TextStyle(color: Color(0xffeb6081), fontWeight: FontWeight.bold, fontSize: 18),
+                                style: TextStyle(
+                                    color: Color(0xffeb6081),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
                               ),
                               Transform.scale(
                                 scale: 1,
-                                child: const  Stack(
+                                child: const Stack(
                                   alignment: Alignment.center,
                                   children: [
                                     Checkbox(
@@ -503,7 +560,8 @@ class MedicationCard extends StatelessWidget {
                                     ),
                                     Icon(Icons.check,
                                         size: 12,
-                                        color: Colors.white), // Adjust the size as needed
+                                        color: Colors
+                                            .white), // Adjust the size as needed
                                   ],
                                 ),
                               )
@@ -514,11 +572,14 @@ class MedicationCard extends StatelessWidget {
                             children: [
                               const Text(
                                 '15:00',
-                                style: TextStyle(color: Color(0xffeb6081), fontWeight: FontWeight.bold, fontSize: 18),
+                                style: TextStyle(
+                                    color: Color(0xffeb6081),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
                               ),
                               Transform.scale(
                                 scale: 1,
-                                child: const  Stack(
+                                child: const Stack(
                                   alignment: Alignment.center,
                                   children: [
                                     Checkbox(
@@ -533,7 +594,8 @@ class MedicationCard extends StatelessWidget {
                                     ),
                                     Icon(Icons.check,
                                         size: 12,
-                                        color: Colors.white), // Adjust the size as needed
+                                        color: Colors
+                                            .white), // Adjust the size as needed
                                   ],
                                 ),
                               )
@@ -544,11 +606,14 @@ class MedicationCard extends StatelessWidget {
                             children: [
                               const Text(
                                 '18:00',
-                                style: TextStyle(color: Color(0xffeb6081), fontWeight: FontWeight.bold, fontSize: 18),
+                                style: TextStyle(
+                                    color: Color(0xffeb6081),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
                               ),
                               Transform.scale(
                                 scale: 1,
-                                child: const  Stack(
+                                child: const Stack(
                                   alignment: Alignment.center,
                                   children: [
                                     Checkbox(
@@ -563,7 +628,8 @@ class MedicationCard extends StatelessWidget {
                                     ),
                                     Icon(Icons.check,
                                         size: 12,
-                                        color: Colors.white), // Adjust the size as needed
+                                        color: Colors
+                                            .white), // Adjust the size as needed
                                   ],
                                 ),
                               )
@@ -572,10 +638,30 @@ class MedicationCard extends StatelessWidget {
                         ],
                       ),
                     ),
+                    const HeightTwelve(),
+                    SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color(0xffeb6081))),
+                          onPressed: scanBarcode,
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment
+                                .center, // Center the content horizontally
+                            children: <Widget>[
+                              Icon(Icons
+                                  .camera_alt_rounded), // The icon you want
+                              SizedBox(
+                                  width:
+                                      8), // Optional: Adds a spacing between the icon and text
+                              Text('Scan Barcode'), // The text content
+                            ],
+                          ),
+                        ))
                   ],
                 )
               ],
-              
             ),
           ),
         );
@@ -690,5 +776,25 @@ class Footer extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+Future<void> scanBarcode() async {
+  String barcodeScanRes;
+  try {
+    barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+      "#ff6666", // The color for the scan button
+      "Cancel", // The string for the cancel button
+      true, // Set to false to disable the beep on scan
+      ScanMode.BARCODE, // Can be set to QR or other modes
+    );
+    if (barcodeScanRes == "-1") {
+      // User canceled or other error
+      return;
+    }
+    // Do something with barcodeScanRes
+    print(barcodeScanRes);
+  } catch (e) {
+    print(e);
   }
 }
