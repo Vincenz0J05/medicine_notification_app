@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "64071736132",
+    "project_id": "medicine-notification-app",
+    "storage_bucket": "medicine-notification-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64071736132:android:1b1148b31eeb52f1a29511",
+        "android_client_info": {
+          "package_name": "com.medicine_notification.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGP2h2gIG6SvhYBK-AsEQTvmAAZXegP1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
