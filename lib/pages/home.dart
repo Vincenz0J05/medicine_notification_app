@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -12,6 +14,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
+  final TextEditingController dosageController = TextEditingController();
+  final TextEditingController daysController = TextEditingController();
+  final TextEditingController reminderTimesController = TextEditingController();
+  final TextEditingController appearanceController = TextEditingController();
   List<String> reminders = []; // A list to store reminder times
 
   @override
@@ -20,7 +28,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text(  
+          title: const Text(
             'Overview',
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
@@ -49,7 +57,8 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         // Use the Padding widget to remove inherent padding around the IconButton
                         IconButton(
-                          icon: const Icon(Icons.arrow_back_ios, color: Color(0xffeb6081), size: 20),
+                          icon: const Icon(Icons.arrow_back_ios,
+                              color: Color(0xffeb6081), size: 20),
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -61,7 +70,9 @@ class _HomePageState extends State<HomePage> {
                             alignment: Alignment.centerLeft,
                             child: const Text('Plan je medicijn inname in',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xffeb6081))),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                    color: Color(0xffeb6081))),
                           ),
                         ),
                       ],
@@ -797,4 +808,11 @@ Future<void> scanBarcode() async {
   } catch (e) {
     print(e);
   }
+}
+
+Future<void> addReminder(string medicineName, string dosage) async {
+  final collection = FirebaseFirestore.instance.collection('medicaiton');
+  await collection.add({
+
+  })
 }
