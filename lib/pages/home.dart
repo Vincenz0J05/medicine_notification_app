@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
+
+final collection = FirebaseFirestore.instance.collection('medication');
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,10 +18,34 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController dosageController = TextEditingController();
-  final TextEditingController daysController = TextEditingController();
   final TextEditingController reminderTimesController = TextEditingController();
   final TextEditingController appearanceController = TextEditingController();
-  List<String> reminders = []; // A list to store reminder times
+
+  final List<String> _allDays = [
+    'Maandag',
+    'Dinsdag',
+    'Woensdag',
+    'Donderdag',
+    'Vrijdag',
+    'Zaterdag',
+    'Zondag'
+  ];
+  List<String> _selectedDays = [];
+
+  List<String> imageUrls = [
+    'assets/images/black-outlined-bottle.png',
+    'assets/images/black-outlined-pill.png',
+    'assets/images/blue-pill.png',
+    'assets/images/blue-yellow-tablet.png',
+    'assets/images/colored-bottle.png',
+    'assets/images/green-pill.png',
+    'assets/images/orange-tablet.png',
+    'assets/images/pink-pill.png',
+    'assets/images/pink-tablet.png',
+    'assets/images/white-tablet.png',
+  ];
+
+  String selectedImageUrl = '';
 
   @override
   Widget build(BuildContext context) {
@@ -48,183 +73,248 @@ class _HomePageState extends State<HomePage> {
       isScrollControlled: true,
       builder: (BuildContext context) {
         return SizedBox(
-            child: Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 40),
-                child: Form(
-                  key: _formKey,
-                  child: Column(children: [
-                    Row(
-                      children: [
-                        // Use the Padding widget to remove inherent padding around the IconButton
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back_ios,
-                              color: Color(0xffeb6081), size: 20),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          constraints:
-                              const BoxConstraints(), // This removes minimum size constraints
-                        ),
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.centerLeft,
-                            child: const Text('Plan je medicijn inname in',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                    color: Color(0xffeb6081))),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const HeightTwelve(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Medicijn Naam'),
-                        const HeightEight(),
-                        inputStyle(
-                            prefixIcon: Icons.medication_rounded,
-                            hintText: 'Antibiotica')
-                      ],
-                    ),
-                    const HeightTwelve(),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Hoeveelheid'),
-                              const HeightEight(),
-                              inputStyle(
-                                  prefixIcon: Icons.medical_information,
-                                  hintText: '2 pills'),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                            child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+            child: SingleChildScrollView(
+                child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 20, right: 20, top: 40),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(children: [
+                        Row(
                           children: [
-                            const Text('Hoevaak Innemen'),
-                            const HeightEight(),
-                            inputStyle(
-                                prefixIcon: Icons.calendar_today_outlined,
-                                hintText: 'Elke dag')
-                          ],
-                        ))
-                      ],
-                    ),
-                    const HeightTwelve(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Dosis'),
-                        const HeightEight(),
-                        inputStyle(
-                            prefixIcon: Icons.add_moderator_outlined,
-                            hintText: '250MG')
-                      ],
-                    ),
-                    const HeightTwelve(),
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Hoevaak Herhalen'),
-                          const HeightEight(),
-                          inputStyle(
-                              prefixIcon: Icons.calendar_today,
-                              hintText: 'Elke Dag')
-                        ]),
-                    const HeightTwelve(),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Herinnering'),
-                              const HeightEight(),
-                              inputStyle(
-                                  prefixIcon: Icons.alarm_sharp,
-                                  hintText: '09:00')
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            Container(
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xffeb6081),
-                                    Color(0xffeb6081)
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: IconButton(
-                                onPressed: () {
-                                  // Handle button press
-                                },
-                                icon:
-                                    const Icon(Icons.add, color: Colors.white),
-                                iconSize: 40,
-                                color: const Color(0xffeb6081),
+                            // Use the Padding widget to remove inherent padding around the IconButton
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back_ios,
+                                  color: Color(0xffeb6081), size: 20),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              constraints:
+                                  const BoxConstraints(), // This removes minimum size constraints
+                            ),
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.centerLeft,
+                                child: const Text('Plan je medicijn inname in',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        color: Color(0xffeb6081))),
                               ),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                    const HeightTwelve(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Uiterlijk'),
-                        const HeightEight(),
-                        SizedBox(
-                          height:
-                              20, // You may want to increase this if the icons are clipped
-                          child: ListView.builder(
-                              itemCount: 5,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                    padding: const EdgeInsets.only(right: 20),
-                                    child: SvgPicture.asset(
-                                      'assets/images/svg/blue-pill.svg',
-                                    ));
-                              }),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 40),
-                    ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.resolveWith<Color>(
-                                    (states) => const Color(0xffeb6081)),
-                            minimumSize:
-                                MaterialStateProperty.resolveWith<Size>(
-                              (states) => Size(
-                                  MediaQuery.of(context).size.width * 0.95,
-                                  50.0),
-                            )),
-                        onPressed: () {},
-                        child: const Text(
-                          'Done',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.normal),
-                        ))
-                  ]),
-                )));
+                        const HeightTwelve(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Medicijn Naam'),
+                            const HeightEight(),
+                            inputStyle(
+                                prefixIcon: Icons.medication_rounded,
+                                hintText: 'Paracetamol/Hoestdrank',
+                                controller: nameController)
+                          ],
+                        ),
+                        const HeightTwelve(),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Hoeveelheid'),
+                                  const HeightEight(),
+                                  inputStyle(
+                                      prefixIcon: Icons.medical_information,
+                                      hintText: '1 pil/tablet',
+                                      controller: amountController)
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                                child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Dosis'),
+                                const HeightEight(),
+                                inputStyle(
+                                    prefixIcon: Icons.my_library_add_rounded,
+                                    hintText: '500mg/ml',
+                                    controller: dosageController)
+                              ],
+                            ))
+                          ],
+                        ),
+                        const HeightTwelve(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Welke dag(en)'),
+                            const HeightEight(),
+                            MultiSelectBottomSheetField(
+                              initialChildSize: 0.4,
+                              listType: MultiSelectListType.LIST,
+                              searchable: true,
+                              items: _allDays
+                                  .map((day) => MultiSelectItem(day, day))
+                                  .toList(),
+                              onConfirm: (values) {
+                                _selectedDays = List<String>.from(values);
+                              },
+                              chipDisplay: MultiSelectChipDisplay(
+                                onTap: (value) {
+                                  setState(() {
+                                    _selectedDays.remove(value);
+                                  });
+                                },
+                              ),
+                              buttonText: const Text(
+                                "Selecteer dagen",
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              title: const Text(
+                                "Dagen",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              buttonIcon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.grey[700],
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const HeightTwelve(),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Gewenste tijd(en) instellen'),
+                                  const HeightEight(),
+                                  inputStyle(
+                                      prefixIcon: Icons.alarm_sharp,
+                                      hintText: '09:00',
+                                      controller: reminderTimesController)
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 15),
+                            Column(
+                              children: [
+                                const SizedBox(height: 20),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xffeb6081),
+                                        Color(0xffeb6081)
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      // Handle button press
+                                    },
+                                    icon: const Icon(Icons.add,
+                                        color: Colors.white),
+                                    iconSize: 40,
+                                    color: const Color(0xffeb6081),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const HeightTwelve(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Uiterlijk'),
+                            SizedBox(
+                              height:
+                                  80, // Adjust the height to fit your images and labels
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: imageUrls.length,
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedImageUrl = imageUrls[index];
+                                      });
+                                    },
+                                    child: Container(
+                                      width:
+                                          80, // Adjust the width as necessary
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      color: selectedImageUrl ==
+                                              imageUrls[index]
+                                          ? Colors.blue
+                                          : Colors
+                                              .transparent, // Highlight selected image
+                                      child: Column(
+                                        children: [
+                                          Expanded(
+                                            child: Image.asset(
+                                                imageUrls[index]), // Image
+                                          ), // Replace with your actual labels as necessary
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 90),
+                        ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                        (states) => const Color(0xffeb6081)),
+                                minimumSize:
+                                    MaterialStateProperty.resolveWith<Size>(
+                                  (states) => Size(
+                                      MediaQuery.of(context).size.width * 0.95,
+                                      50.0),
+                                )),
+                            onPressed: addReminder,
+                            child: const Text(
+                              'Done',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.normal),
+                            ))
+                      ]),
+                    ))));
       },
     );
+  }
+
+  Future<void> addReminder() async {
+    await collection.add({
+      'name': nameController.text,
+      'amount': amountController.text,
+      'dosage': dosageController.text,
+      'days': _selectedDays,
+      'reminder_times': reminderTimesController.text,
+      'appearance': selectedImageUrl,
+    });
   }
 }
 
@@ -250,8 +340,12 @@ class HeightEight extends StatelessWidget {
   }
 }
 
-Widget inputStyle({IconData? prefixIcon, String? hintText}) {
+Widget inputStyle(
+    {IconData? prefixIcon,
+    String? hintText,
+    required TextEditingController controller}) {
   return TextField(
+    controller: controller,
     decoration: InputDecoration(
       filled: true,
       fillColor: Colors.grey[200],
@@ -384,12 +478,54 @@ class DateSelectorState extends State<DateSelector> {
   }
 }
 
-class MedicationCard extends StatelessWidget {
-  const MedicationCard({
-    super.key,
-    required DateTime date,
-  });
+class MedicationCard extends StatefulWidget {
+  final DateTime date;
 
+  MedicationCard({
+    Key? key,
+    required this.date,
+  }) : super(key: key);
+
+  @override
+  _MedicationCardState createState() => _MedicationCardState();
+}
+
+class _MedicationCardState extends State<MedicationCard> {
+  String name = '';
+  String dosage = '';
+  String image = '';
+  List<String> days = []; 
+  List<dynamic> reminderTime = []; 
+  String amount = ''; 
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      QuerySnapshot querySnapshot = await collection.get();
+      for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+        Map<String, dynamic> data =
+            documentSnapshot.data() as Map<String, dynamic>;
+
+        setState(() {
+          name = data['name'] ?? ''; // Handle null values
+          dosage = data['dosage'] ?? ''; // Handle null values
+          image = data['image'];
+          days = List<String>.from(data['days']); // Assign the fetched data
+          reminderTime = List<dynamic>.from(data['reminder_time']); // Assign the fetched data
+          amount = data['amount'] ?? '';
+        });
+      }
+    } catch (e) {
+      print('got an error: $e');
+    }
+  }
+
+  // Future<void> fetchData() async {
   void _showDetails(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -439,18 +575,18 @@ class MedicationCard extends StatelessWidget {
                   fallbackHeight: 200,
                   fallbackWidth: 0.90,
                 ),
-                const Align(
+                Align(
                   alignment: Alignment.topLeft,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Detoxil',
-                          style: TextStyle(
+                      Text(name,
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 30)),
-                      SizedBox(
+                      const SizedBox(
                         height: 2,
                       ),
-                      Text('20mg pills')
+                      Text(dosage)
                     ],
                   ),
                 ),
@@ -720,22 +856,22 @@ class MedicationCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Detoxil, 20MG',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    Text(
+                      '$name, $dosage',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Row(
+                        Row(
                           children: [
-                            Icon(Icons.access_time_filled, size: 15),
-                            SizedBox(
+                            const Icon(Icons.access_time_filled, size: 15),
+                            const SizedBox(
                                 width:
                                     5), // A small space between icon and text
-                            Text('14:00'),
+                            Text('$reminderTime'),
                           ],
                         ),
                         Padding(
@@ -808,11 +944,4 @@ Future<void> scanBarcode() async {
   } catch (e) {
     print(e);
   }
-}
-
-Future<void> addReminder(string medicineName, string dosage) async {
-  final collection = FirebaseFirestore.instance.collection('medicaiton');
-  await collection.add({
-
-  })
 }
